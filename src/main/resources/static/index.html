@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导入导出</title>
+</head>
+<body>
+<form action="exportData">
+    <input type="submit" value="导出">
+</form>
+<!--<form action="importData" method="post" enctype="multipart/form-data">-->
+    <!--<input type="file" name="multipartFile">-->
+    <!--<input type="submit" value="导入">-->
+<!--</form>-->
+<form action="" method="post" enctype="multipart/form-data">
+    <input type="file" name="multipartFile" id="multipartFile">
+    <input id="import" type="button" value="ajax导入">
+</form>
+<script src="/js/jquery-1.12.4.js"></script>
+<script>
+    // 监听文件上传
+    $('#import').on('click',function (e) {
+        var file = $("#multipartFile").val();
+        //解决360兼容模式bug
+        if(file==""){
+            return false;
+        }
+        var suffix = file.slice(file.lastIndexOf(".")+1).toLowerCase();
+        console.log(suffix)
+        if ("xls"!=suffix && "xlsx" != suffix) {
+            $("#multipartFile").val("");
+            alert("只能上传Excle文件");
+            return false;
+        }
+        var formData = new FormData();
+        formData.append("multipartFile",$("#multipartFile")[0].files[0]);
+        $.ajax({
+            url:"/importData",
+            type:'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success:function(res){
+                if(res=="ok"){
+                    $("#multipartFile").val("");
+                    alert("导入成功");
+                }else {
+                    $("#multipartFile").val("");
+                    alert("导入失败");
+                }
+            }
+        })
+    });
+</script>
+</body>
+</html>
